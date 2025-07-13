@@ -1,468 +1,421 @@
-// script.js
+// Loading Screen
+window.addEventListener('load', function() {
+    const loadingScreen = document.getElementById('loading-screen');
+    setTimeout(() => {
+        loadingScreen.classList.add('hidden');
+    }, 1000);
+});
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Preloader functionality
-    const preloader = document.getElementById('preloader');
-    if (preloader) {
-        window.addEventListener('load', () => {
-            preloader.classList.add('hidden');
-            // Ensure particles.js initializes after preloader hides
-            setTimeout(() => {
-                if (typeof particlesJS !== 'undefined') {
-                    initParticles(); // Call a dedicated function for particles
-                }
-            }, 500); // Small delay to ensure smooth transition
-        });
+// Navigation
+const navbar = document.getElementById('navbar');
+const hamburger = document.getElementById('hamburger');
+const navMenu = document.getElementById('nav-menu');
+const navLinks = document.querySelectorAll('.nav-link');
+
+// Mobile menu toggle
+hamburger.addEventListener('click', function() {
+    hamburger.classList.toggle('active');
+    navMenu.classList.toggle('active');
+});
+
+// Close mobile menu when clicking on a link
+navLinks.forEach(link => {
+    link.addEventListener('click', function() {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+    });
+});
+
+// Navbar scroll effect
+window.addEventListener('scroll', function() {
+    if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
     } else {
-        // If no preloader, initialize particles immediately
-        if (typeof particlesJS !== 'undefined') {
-            initParticles();
+        navbar.classList.remove('scrolled');
+    }
+});
+
+// Active navigation link
+function updateActiveNavLink() {
+    const sections = document.querySelectorAll('section[id]');
+    const scrollPos = window.scrollY + 100;
+
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.offsetHeight;
+        const sectionId = section.getAttribute('id');
+        const navLink = document.querySelector(`.nav-link[href="#${sectionId}"]`);
+
+        if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
+            navLinks.forEach(link => link.classList.remove('active'));
+            if (navLink) {
+                navLink.classList.add('active');
+            }
         }
-    }
-
-    // Function to initialize Particles.js
-    function initParticles() {
-        particlesJS('particles-js', {
-            "particles": {
-                "number": {
-                    "value": 80,
-                    "density": {
-                        "enable": true,
-                        "value_area": 800
-                    }
-                },
-                "color": {
-                    "value": "#cccccc" // Light gray color for particles
-                },
-                "shape": {
-                    "type": "circle",
-                    "stroke": {
-                        "width": 0,
-                        "color": "#000000"
-                    },
-                    "polygon": {
-                        "nb_sides": 5
-                    },
-                },
-                "opacity": {
-                    "value": 0.5,
-                    "random": false,
-                    "anim": {
-                        "enable": false,
-                        "speed": 1,
-                        "opacity_min": 0.1,
-                        "sync": false
-                    }
-                },
-                "size": {
-                    "value": 3,
-                    "random": true,
-                    "anim": {
-                        "enable": false,
-                        "speed": 40,
-                        "size_min": 0.1,
-                        "sync": false
-                    }
-                },
-                "line_linked": {
-                    "enable": true,
-                    "distance": 150,
-                    "color": "#cccccc", // Light gray for lines
-                    "opacity": 0.4,
-                    "width": 1
-                },
-                "move": {
-                    "enable": true,
-                    "speed": 6,
-                    "direction": "none",
-                    "random": false,
-                    "straight": false,
-                    "out_mode": "out",
-                    "bounce": false,
-                    "attract": {
-                        "enable": false,
-                        "rotateX": 600,
-                        "rotateY": 1200
-                    }
-                }
-            },
-            "interactivity": {
-                "detect_on": "canvas",
-                "events": {
-                    "onhover": {
-                        "enable": true,
-                        "mode": "grab" // 'grab' or 'repulse'
-                    },
-                    "onclick": {
-                        "enable": true,
-                        "mode": "push" // 'push' or 'bubble'
-                    },
-                    "resize": true
-                },
-                "modes": {
-                    "grab": {
-                        "distance": 140,
-                        "line_linked": {
-                            "opacity": 1
-                        }
-                    },
-                    "bubble": {
-                        "distance": 400,
-                        "size": 40,
-                        "duration": 2,
-                        "opacity": 8,
-                        "speed": 3
-                    },
-                    "repulse": {
-                        "distance": 200,
-                        "duration": 0.4
-                    },
-                    "push": {
-                        "particles_nb": 4
-                    },
-                    "remove": {
-                        "particles_nb": 2
-                    }
-                }
-            },
-            "retina_detect": true
-        });
-    }
-
-    // Theme Toggle (Dark/Light Mode)
-const themeToggleBtn = document.getElementById('themeToggleBtn');
-const body = document.body;
-const currentTheme = localStorage.getItem('theme');
-
-// Apply saved theme on load, or default to light-mode (Green Mode)
-if (currentTheme) {
-    // Agar koi theme preference saved hai, toh wahi apply karein
-    body.classList.add(currentTheme);
-    if (currentTheme === 'dark-mode') {
-        themeToggleBtn.querySelector('i').classList.remove('fa-moon');
-        themeToggleBtn.querySelector('i').classList.add('fa-sun');
-    } else {
-        // Agar saved theme 'light-mode' hai, toh moon icon set karein
-        themeToggleBtn.querySelector('i').classList.remove('fa-sun');
-        themeToggleBtn.querySelector('i').classList.add('fa-moon');
-    }
-} else {
-    // Agar koi preference save nahi hai, toh default Green Mode (light-mode) set karein
-    body.classList.add('light-mode');
-    themeToggleBtn.querySelector('i').classList.remove('fa-sun'); // Ensure sun icon is not there
-    themeToggleBtn.querySelector('i').classList.add('fa-moon'); // Default icon moon (to toggle to dark)
-    localStorage.setItem('theme', 'light-mode'); // Ye bhi ensure karega ki light-mode save ho jaaye
+    });
 }
 
-// Event listener for theme toggle button
-themeToggleBtn.addEventListener('click', () => {
-    body.classList.toggle('dark-mode'); // 'dark-mode' class add/remove karega
+window.addEventListener('scroll', updateActiveNavLink);
 
-    let theme = 'light-mode'; // Default theme 'light-mode'
-    if (body.classList.contains('dark-mode')) {
-        theme = 'dark-mode'; // Agar ab dark-mode hai, toh theme 'dark-mode'
-        themeToggleBtn.querySelector('i').classList.remove('fa-moon');
-        themeToggleBtn.querySelector('i').classList.add('fa-sun'); // Icon sun ka dikhao
+// Smooth scrolling for navigation links
+navLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href').substring(1);
+        const targetSection = document.getElementById(targetId);
+        
+        if (targetSection) {
+            const offsetTop = targetSection.offsetTop - 70;
+            window.scrollTo({
+                top: offsetTop,
+                behavior: 'smooth'
+            });
+        }
+    });
+});
+
+// Scroll animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        }
+    });
+}, observerOptions);
+
+// Observe elements for animation
+document.addEventListener('DOMContentLoaded', function() {
+    const animatedElements = document.querySelectorAll('.section');
+    animatedElements.forEach(el => {
+        el.classList.add('fade-in');
+        observer.observe(el);
+    });
+});
+
+// Back to top button
+const backToTopButton = document.getElementById('backToTop');
+
+window.addEventListener('scroll', function() {
+    if (window.scrollY > 300) {
+        backToTopButton.classList.add('visible');
     } else {
-        // Agar ab light-mode hai, toh theme 'light-mode'
-        themeToggleBtn.querySelector('i').classList.remove('fa-sun');
-        themeToggleBtn.querySelector('i').classList.add('fa-moon'); // Icon moon ka dikhao
-    }
-    localStorage.setItem('theme', theme); // Updated theme ko localStorage mein save karein
-});
-
-
-    // Smooth scrolling for navigation links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href');
-            if (targetId === '#hero') { // Home is usually #hero
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-            } else {
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    const navbar = document.querySelector('.navbar');
-                    const offset = navbar ? navbar.offsetHeight : 0;
-                    window.scrollTo({
-                        top: targetElement.offsetTop - offset,
-                        behavior: 'smooth'
-                    });
-                }
-            }
-
-            // Close mobile nav if open
-            const navbarNav = document.querySelector('.navbar-nav');
-            const hamburger = document.querySelector('.hamburger');
-            if (navbarNav && hamburger && navbarNav.classList.contains('active')) {
-                navbarNav.classList.remove('active');
-                hamburger.classList.remove('active');
-                hamburger.setAttribute('aria-expanded', 'false');
-            }
-        });
-    });
-
-    // Navbar active class and scroll effect
-    const sections = document.querySelectorAll('section');
-    const navLinks = document.querySelectorAll('.nav-link');
-    const navbar = document.querySelector('.navbar');
-
-    const activateNavLink = () => {
-        let current = '';
-        const navbarHeight = navbar ? navbar.offsetHeight : 0;
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop - navbarHeight - 50;
-            const sectionHeight = section.offsetHeight;
-            if (pageYOffset >= sectionTop && pageYOffset < sectionTop + sectionHeight) {
-                current = section.getAttribute('id');
-            }
-        });
-
-        navLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href').includes(current)) {
-                link.classList.add('active');
-            } else if (current === '' && link.getAttribute('href') === '#hero') {
-                link.classList.add('active');
-            }
-        });
-
-        // Navbar scroll background change
-        if (window.scrollY > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
-    };
-
-    window.addEventListener('scroll', activateNavLink);
-    activateNavLink();
-
-    // Hamburger menu functionality
-    const hamburger = document.querySelector('.hamburger');
-    const navbarNav = document.querySelector('.navbar-nav');
-
-    if (hamburger && navbarNav) {
-        hamburger.addEventListener('click', () => {
-            navbarNav.classList.toggle('active');
-            hamburger.classList.toggle('active'); // Toggle active class for hamburger animation
-            const isExpanded = hamburger.classList.contains('active');
-            hamburger.setAttribute('aria-expanded', isExpanded);
-        });
-    }
-
-    // Typewriter effect for Hero section
-    const typewriterElement = document.querySelector('.hero-text .typewriter-text');
-    if (typewriterElement) {
-        const textToType = typewriterElement.getAttribute('data-text');
-        let charIndex = 0;
-        let spanElement = typewriterElement.querySelector('span');
-
-        function type() {
-            if (charIndex < textToType.length) {
-                spanElement.textContent += textToType.charAt(charIndex);
-                charIndex++;
-                setTimeout(type, 100);
-            }
-        }
-        type();
-    }
-
-    // Interactive Skills Chart (Chart.js)
-    const skillsCtx = document.getElementById('skillsChart');
-    if (skillsCtx) {
-        new Chart(skillsCtx, {
-            type: 'radar',
-            data: {
-                labels: ['Python', 'NumPy/Pandas', 'Matplotlib', 'Scikit-learn', 'SQL', 'Deep Learning', 'Tableau/Power BI'],
-                datasets: [{
-                    label: 'Proficiency Level',
-                    data: [90, 85, 80, 75, 70, 70, 75],
-                    backgroundColor: 'rgba(0, 123, 255, 0.6)',
-                    borderColor: 'rgba(0, 123, 255, 1)',
-                    borderWidth: 1,
-                    pointBackgroundColor: 'rgba(52, 58, 64, 1)',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'rgba(52, 58, 64, 1)'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    r: {
-                        angleLines: {
-                            color: 'rgba(0, 0, 0, 0.1)'
-                        },
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.1)'
-                        },
-                        pointLabels: {
-                            font: {
-                                size: 14,
-                                weight: 'bold'
-                            },
-                            color: 'var(--secondary-color)'
-                        },
-                        ticks: {
-                            beginAtZero: true,
-                            max: 100,
-                            stepSize: 20,
-                            display: false
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return context.label + ': ' + context.raw + '%';
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    // Back to Top Button functionality
-    const backToTopBtn = document.getElementById('backToTopBtn');
-
-    window.addEventListener('scroll', () => {
-        if (window.pageYOffset > 300) {
-            backToTopBtn.classList.add('show');
-        } else {
-            backToTopBtn.classList.remove('show');
-        }
-    });
-
-    backToTopBtn.addEventListener('click', () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    });
-
-    // Section reveal on scroll and skill bar animation
-    const revealSections = document.querySelectorAll('.section-reveal');
-
-    const sectionObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('revealed');
-
-                // Animate skill bars when skill section is revealed
-                if (entry.target.id === 'skills') {
-                    const skillBars = entry.target.querySelectorAll('.skill-bar');
-                    skillBars.forEach(bar => {
-                        const proficiency = bar.getAttribute('data-proficiency');
-                        bar.style.width = proficiency + '%';
-                    });
-                }
-                observer.unobserve(entry.target);
-            }
-        });
-    }, {
-        threshold: 0.15, // When 15% of the section is visible
-        rootMargin: "0px 0px -50px 0px" // Adjust to trigger slightly earlier/later
-    });
-
-    revealSections.forEach(section => {
-        sectionObserver.observe(section);
-    });
-
-    // Contact Form Validation and Submission
-    const contactForm = document.getElementById('contactForm');
-    if (contactForm) {
-        const nameInput = document.getElementById('name');
-        const emailInput = document.getElementById('email');
-        const messageInput = document.getElementById('message');
-        const formStatus = document.getElementById('form-status');
-
-        const validateField = (inputElement, errorElement, validationFn) => {
-            if (!validationFn(inputElement.value.trim())) {
-                inputElement.classList.add('invalid');
-                errorElement.textContent = `Please enter a valid ${inputElement.name}.`;
-                return false;
-            } else {
-                inputElement.classList.remove('invalid');
-                errorElement.textContent = '';
-                return true;
-            }
-        };
-
-        const isValidEmail = (email) => {
-            const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return re.test(String(email).toLowerCase());
-        };
-
-        const isValidText = (text) => text.length >= 2;
-        const isValidMessage = (message) => message.length >= 10;
-
-        nameInput.addEventListener('input', () => validateField(nameInput, document.getElementById('name-error'), isValidText));
-        emailInput.addEventListener('input', () => validateField(emailInput, document.getElementById('email-error'), isValidEmail));
-        messageInput.addEventListener('input', () => validateField(messageInput, document.getElementById('message-error'), isValidMessage));
-
-        contactForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            const isNameValid = validateField(nameInput, document.getElementById('name-error'), isValidText);
-            const isEmailValid = validateField(emailInput, document.getElementById('email-error'), isValidEmail);
-            const isMessageValid = validateField(messageInput, document.getElementById('message-error'), isValidMessage);
-
-            if (!isNameValid || !isEmailValid || !isMessageValid) {
-                formStatus.className = 'error';
-                formStatus.textContent = 'Please correct the errors in the form.';
-                return;
-            }
-
-            formStatus.className = '';
-            formStatus.textContent = 'Sending message...';
-            formStatus.style.display = 'block';
-
-            const formData = new FormData(this);
-
-            try {
-                const response = await fetch(this.action, {
-                    method: this.method,
-                    body: formData,
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                });
-
-                if (response.ok) {
-                    formStatus.className = 'success';
-                    formStatus.textContent = 'Message sent successfully! Aman will get back to you soon.';
-                    this.reset();
-                    nameInput.classList.remove('invalid');
-                    emailInput.classList.remove('invalid');
-                    messageInput.classList.remove('invalid');
-                    document.getElementById('name-error').textContent = '';
-                    document.getElementById('email-error').textContent = '';
-                    document.getElementById('message-error').textContent = '';
-                } else {
-                    const data = await response.json();
-                    if (data.errors) {
-                        formStatus.className = 'error';
-                        formStatus.textContent = data.errors.map(error => error.message).join(', ');
-                    } else {
-                        formStatus.className = 'error';
-                        formStatus.textContent = 'Oops! There was a problem sending your message.';
-                    }
-                }
-            } catch (error) {
-                formStatus.className = 'error';
-                formStatus.textContent = 'Network error. Please try again later.';
-                console.error('Form submission error:', error);
-            }
-        });
+        backToTopButton.classList.remove('visible');
     }
 });
+
+backToTopButton.addEventListener('click', function() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+});
+
+// Contact form
+const contactForm = document.getElementById('contactForm');
+
+contactForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Get form data
+    const formData = new FormData(contactForm);
+    const name = formData.get('name');
+    const email = formData.get('email');
+    const message = formData.get('message');
+    
+    // Simple validation
+    if (!name || !email || !message) {
+        alert('Please fill in all fields');
+        return;
+    }
+    
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        alert('Please enter a valid email address');
+        return;
+    }
+    
+    // Simulate form submission
+    const submitBtn = contactForm.querySelector('.submit-btn');
+    const originalText = submitBtn.innerHTML;
+    
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    submitBtn.disabled = true;
+    
+    setTimeout(() => {
+        alert('Thank you for your message! I\'ll get back to you soon.');
+        contactForm.reset();
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }, 2000);
+});
+
+// Typing animation for hero text
+function typeWriter(element, text, speed = 100) {
+    let i = 0;
+    element.innerHTML = '';
+    
+    function type() {
+        if (i < text.length) {
+            element.innerHTML += text.charAt(i);
+            i++;
+            setTimeout(type, speed);
+        }
+    }
+    
+    type();
+}
+
+// Initialize typing animation when page loads
+window.addEventListener('load', function() {
+    setTimeout(() => {
+        const heroDescription = document.querySelector('.hero-description');
+        if (heroDescription) {
+            const originalText = heroDescription.textContent;
+            typeWriter(heroDescription, originalText, 50);
+        }
+    }, 1500);
+});
+
+// Parallax effect for hero background
+window.addEventListener('scroll', function() {
+    const scrolled = window.pageYOffset;
+    const heroBackground = document.querySelector('.bg-animation');
+    
+    if (heroBackground) {
+        const speed = scrolled * 0.5;
+        heroBackground.style.transform = `translateY(${speed}px)`;
+    }
+});
+
+// Skills animation on scroll
+function animateSkills() {
+    const skillItems = document.querySelectorAll('.skill-item');
+    
+    skillItems.forEach((item, index) => {
+        setTimeout(() => {
+            item.style.transform = 'translateY(0)';
+            item.style.opacity = '1';
+        }, index * 100);
+    });
+}
+
+// Project cards hover effect
+document.querySelectorAll('.project-card').forEach(card => {
+    card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-10px) scale(1.02)';
+    });
+    
+    card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1)';
+    });
+});
+
+// Add floating animation to profile image
+const profileImage = document.querySelector('.profile-image');
+if (profileImage) {
+    let floatDirection = 1;
+    
+    setInterval(() => {
+        const currentTransform = profileImage.style.transform || 'translateY(0px)';
+        const currentY = parseFloat(currentTransform.match(/translateY\(([^)]+)\)/)?.[1] || 0);
+        
+        if (currentY >= 10) floatDirection = -1;
+        if (currentY <= -10) floatDirection = 1;
+        
+        const newY = currentY + (floatDirection * 0.5);
+        profileImage.style.transform = `translateY(${newY}px)`;
+    }, 50);
+}
+
+// Add glitch effect to name on hover
+const nameElement = document.querySelector('.name');
+if (nameElement) {
+    nameElement.addEventListener('mouseenter', function() {
+        this.style.animation = 'glitch 0.3s ease-in-out';
+    });
+    
+    nameElement.addEventListener('animationend', function() {
+        this.style.animation = '';
+    });
+}
+
+// Add CSS for glitch animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes glitch {
+        0% { transform: translate(0); }
+        20% { transform: translate(-2px, 2px); }
+        40% { transform: translate(-2px, -2px); }
+        60% { transform: translate(2px, 2px); }
+        80% { transform: translate(2px, -2px); }
+        100% { transform: translate(0); }
+    }
+`;
+document.head.appendChild(style);
+
+// Cursor trail effect
+let mouseX = 0;
+let mouseY = 0;
+let trailElements = [];
+
+function createTrailElement() {
+    const trail = document.createElement('div');
+    trail.className = 'cursor-trail';
+    trail.style.cssText = `
+        position: fixed;
+        width: 4px;
+        height: 4px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0.7;
+        transition: all 0.3s ease;
+    `;
+    document.body.appendChild(trail);
+    return trail;
+}
+
+// Create trail elements
+for (let i = 0; i < 10; i++) {
+    trailElements.push(createTrailElement());
+}
+
+document.addEventListener('mousemove', function(e) {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+});
+
+function animateTrail() {
+    let x = mouseX;
+    let y = mouseY;
+    
+    trailElements.forEach((trail, index) => {
+        const nextTrail = trailElements[index + 1] || trailElements[0];
+        
+        trail.style.left = x - 2 + 'px';
+        trail.style.top = y - 2 + 'px';
+        trail.style.opacity = (10 - index) / 10;
+        trail.style.transform = `scale(${(10 - index) / 10})`;
+        
+        x += (parseFloat(nextTrail.style.left) - x) * 0.3;
+        y += (parseFloat(nextTrail.style.top) - y) * 0.3;
+    });
+    
+    requestAnimationFrame(animateTrail);
+}
+
+animateTrail();
+
+// Add particle effect to hero section
+function createParticle() {
+    const particle = document.createElement('div');
+    particle.style.cssText = `
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        pointer-events: none;
+        opacity: 0.5;
+    `;
+    
+    particle.style.left = Math.random() * 100 + '%';
+    particle.style.top = Math.random() * 100 + '%';
+    
+    const heroSection = document.querySelector('.hero');
+    if (heroSection) {
+        heroSection.appendChild(particle);
+        
+        // Animate particle
+        const duration = Math.random() * 3000 + 2000;
+        const deltaX = (Math.random() - 0.5) * 200;
+        const deltaY = (Math.random() - 0.5) * 200;
+        
+        particle.animate([
+            { transform: 'translate(0, 0)', opacity: 0.5 },
+            { transform: `translate(${deltaX}px, ${deltaY}px)`, opacity: 0 }
+        ], {
+            duration: duration,
+            easing: 'ease-out'
+        }).onfinish = () => particle.remove();
+    }
+}
+
+// Create particles periodically
+setInterval(createParticle, 300);
+
+// Add intersection observer for counting animation
+function animateCounter(element, target, duration = 2000) {
+    let start = 0;
+    const increment = target / (duration / 16);
+    
+    function updateCounter() {
+        start += increment;
+        if (start < target) {
+            element.textContent = Math.floor(start) + '+';
+            requestAnimationFrame(updateCounter);
+        } else {
+            element.textContent = target + '+';
+        }
+    }
+    
+    updateCounter();
+}
+
+// Observe stat numbers for counting animation
+const statObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const statNumber = entry.target;
+            const targetValue = parseInt(statNumber.textContent);
+            animateCounter(statNumber, targetValue);
+            statObserver.unobserve(statNumber);
+        }
+    });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.stat-number').forEach(stat => {
+    statObserver.observe(stat);
+});
+
+// Add theme toggle functionality (bonus feature)
+function createThemeToggle() {
+    const themeToggle = document.createElement('button');
+    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+    themeToggle.style.cssText = `
+        position: fixed;
+        top: 50%;
+        right: 20px;
+        transform: translateY(-50%);
+        width: 50px;
+        height: 50px;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        border-radius: 50%;
+        color: var(--text-primary);
+        cursor: pointer;
+        z-index: 1000;
+        transition: all 0.3s ease;
+        display: none;
+    `;
+    
+    document.body.appendChild(themeToggle);
+    
+    // Show theme toggle on desktop
+    if (window.innerWidth > 768) {
+        themeToggle.style.display = 'block';
+    }
+}
+
+createThemeToggle();
+
+console.log('🚀 Portfolio website loaded successfully!');
+console.log('💼 Aman Singh Rajput - Data Scientist Portfolio');
+console.log('📧 Contact: amanrajput746332@gmail.com');
